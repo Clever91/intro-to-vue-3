@@ -9,24 +9,28 @@ app.component('product-display', {
     /*html*/
     `<div class="product-display">
         <div class="product-container">
-        <div class="product-image">
-            <img v-bind:src="image" :alt="desc" :class="{'out-of-stock-img': !inStock}">
+            <div class="product-image">
+                <img v-bind:src="image" :alt="desc" :class="{'out-of-stock-img': !inStock}">
+            </div>
+            <div class="product-info">
+                <h1>{{ title }}</h1>
+                <p>{{ desc }}</p>
+                <p>Shipping: {{ shipping }}</p>
+                <p v-if="inStock">In Stock ({{ quantityInStock }})</p>
+                <p v-else>Out Stock ({{ quantityInStock }})</p>
+                <p v-show="onSale">On Sale</p>
+                <product-details :items="details"></product-details>
+                <div v-for="(variant, index) in variants" v-on:mouseover="updateVariant(index)"
+                v-bind:style="{backgroundColor: variant.color}" class="color-circle"></div>
+                <div v-for="item in sizes" :key="item.id"><b>Size:</b> {{ item.size }}</div>
+                <button class="button" @click="addToCart" v-bind:disabled="!inStock" :class="{disabledButton: !inStock}">Add</button> 
+                <button class="button" @click="removeToCart" v-bind:disabled="!inStock" :class="{disabledButton: !inStock}">Decrement</button> 
+            </div>
         </div>
-        <div class="product-info">
-            <h1>{{ title }}</h1>
-            <p>{{ desc }}</p>
-            <p>Shipping: {{ shipping }}</p>
-            <p v-if="inStock">In Stock ({{ quantityInStock }})</p>
-            <p v-else>Out Stock ({{ quantityInStock }})</p>
-            <p v-show="onSale">On Sale</p>
-            <product-details :items="details"></product-details>
-            <div v-for="(variant, index) in variants" v-on:mouseover="updateVariant(index)"
-            v-bind:style="{backgroundColor: variant.color}" class="color-circle"></div>
-            <div v-for="item in sizes" :key="item.id"><b>Size:</b> {{ item.size }}</div>
-            <button class="button" @click="addToCart" v-bind:disabled="!inStock" :class="{disabledButton: !inStock}">Add</button> 
-            <button class="button" @click="removeToCart" v-bind:disabled="!inStock" :class="{disabledButton: !inStock}">Decrement</button> 
-        </div>
-        </div>
+
+        <review-list v-if="reviews.length" :reviews="reviews"></review-list>
+
+        <review-form @review-submitted="addReview"></review-form>
     </div>`,
     data: function() {
         return {
@@ -44,7 +48,8 @@ app.component('product-display', {
             sizes: [
                 {id: 1122, size: 45},
                 {id: 1123, size: 46}
-            ]
+            ],
+            reviews: []
         }
     },
     methods: {
@@ -57,6 +62,9 @@ app.component('product-display', {
         },
         updateVariant(index) {
             this.selectedIndex = index
+        },
+        addReview(review) {
+            this.reviews.push(review)
         }
     },
     computed: {

@@ -1,0 +1,23 @@
+app.component('review-list', {
+    props: {
+        reviews: {
+            type: Array,
+            requered: true
+        }
+    },
+    template:
+    /*html*/
+    `<div class="review-container">
+        <h3>Reviews:</h3>
+        <ul>
+        <li v-for="(review, index) in reviews" :key="index">
+            {{ review.name }} gave this {{ review.rating }} starts
+            <br/>
+            "{{ review.review }}"
+        </li>
+        </ul>
+    </div>`,
+    data: function() {
+        return {}
+    }
+})
